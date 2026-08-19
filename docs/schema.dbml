@@ -1,0 +1,88 @@
+Table categories {
+  category_id integer [primary key, increment]
+  name varchar(100)
+  description text
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+}
+
+Table products {
+  product_id integer [primary key, increment]
+  category_id integer [not null]
+  name varchar(100)
+  description text
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  deleted_at timestamp
+}
+
+Table product_variants {
+  variant_id integer [primary key, increment]
+  product_id integer [not null]
+  size varchar(20)
+  color varchar(20)
+  sku varchar(50) [unique, not null]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  deleted_at timestamp
+}
+
+Table inventory {
+  inventory_id integer [primary key, increment]
+  variant_id integer [not null]
+  quantity integer [not null]
+  last_updated timestamp [not null, default: `CURRENT_TIMESTAMP`]
+}
+
+Table price_history {
+  price_id integer [primary key, increment]
+  variant_id integer [not null]
+  price numeric(10,2) [not null]
+  effective_from timestamp [not null]
+  effective_to timestamp
+}
+
+Table customers {
+  customer_id integer [primary key, increment]
+  first_name varchar(100)
+  last_name varchar(100)
+  email varchar(150) [unique, not null]
+  phone_number varchar(20)
+  address varchar(100)
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  deleted_at timestamp
+}
+
+Table orders {
+  order_id integer [primary key, increment]
+  customer_id integer [not null]
+  status varchar(20) [not null]
+  total_amount numeric(10,2) [not null]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Table order_items {
+  order_item_id integer [primary key, increment]
+  order_id integer [not null]
+  variant_id integer [not null]
+  quantity integer [not null]
+  unit_price numeric(10,2) [not null]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+}
+
+Table settings {
+  setting_id integer [primary key, increment]
+  key varchar(100) [unique, not null]
+  value varchar(100) [not null]
+  description text
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+}
+
+Ref: products.category_id > categories.category_id
+Ref: product_variants.product_id > products.product_id
+Ref: inventory.variant_id - product_variants.variant_id
+Ref: price_history.variant_id > product_variants.variant_id
+Ref: orders.customer_id > customers.customer_id
+Ref: order_items.order_id > orders.order_id
+Ref: order_items.variant_id > product_variants.variant_id
+Ref: "categories"."description" <>? "categories"."created_at"
+Ref: "products"."name" <>? "products"."created_at"
