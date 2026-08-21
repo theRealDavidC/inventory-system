@@ -1,0 +1,14 @@
+BEGIN;
+
+CREATE TABLE customers (
+ customer_id SERIAL PRIMARY KEY, 
+ first_name VARCHAR(100) NOT NULL,
+ last_name VARCHAR(100) NOT NULL, 
+ email VARCHAR(120) UNIQUE NOT NULL,
+ phone_number VARCHAR(20),
+ address VARCHAR(100),
+ created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ deleted_at TIMESTAMP
+ );
+ 
+COMMIT;
